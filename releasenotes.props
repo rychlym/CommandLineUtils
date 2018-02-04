@@ -24,6 +24,7 @@ New features:
 API improvements:
   - HelpOption can be set to be inherited by all subcommands
   - Add VersionOptionFromMember to use a property or method as the source of version information
+  - Add API to extend the way in which CLR types are parsed with custom conventions
     </PackageReleaseNotes>
     <PackageReleaseNotes Condition="'$(VersionPrefix)' == '2.1.1'">
 2.1.1:

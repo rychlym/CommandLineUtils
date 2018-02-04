@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using McMaster.Extensions.CommandLineUtils.Abstractions;
 
 namespace McMaster.Extensions.CommandLineUtils
 {
@@ -12,7 +13,7 @@ namespace McMaster.Extensions.CommandLineUtils
     /// The value for the version information is provided by the properties or members specified.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class VersionOptionFromMemberAttribute : OptionAttributeBase
+    public sealed class VersionOptionFromMemberAttribute : OptionAttributeBase, ICommandLineAppConvention
     {
         /// <summary>
         /// Initializes an instance of <see cref="VersionOptionFromMemberAttribute"/> with <c>--version</c> as the template.
@@ -72,6 +73,11 @@ namespace McMaster.Extensions.CommandLineUtils
                 .Concat(type.GetTypeInfo().GetProperties(binding).Where(m => m.Name == name).Select(p => p.GetMethod))
                 .Where(m => m.ReturnType == typeof(string) && m.GetParameters().Length == 0)
                 .ToArray();
+        }
+
+        void ICommandLineAppConvention.Apply(ConventionCreationContext context)
+        {
+            context.RegisterTargetTypeInitializedAction(instance => Configure(context.Application, context.TargetType, instance));
         }
     }
 }

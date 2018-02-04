@@ -21,6 +21,7 @@ namespace McMaster.Extensions.CommandLineUtils
 
         private volatile bool _initialized;
         private readonly TTarget _target;
+        private readonly ConventionCreationContext _conventionContext;
         private BindResult _bindResult = new BindResult();
 
         private readonly List<Action<TTarget>> _binders = new List<Action<TTarget>>();
@@ -38,6 +39,12 @@ namespace McMaster.Extensions.CommandLineUtils
             App = app;
             App.OnExecute((Func<int>)OnExecute);
             _target = new TTarget();
+
+            _conventionContext = new ConventionCreationContext
+            {
+                Application = App,
+                TargetType = typeof(TTarget),
+            };
         }
 
         internal CommandLineApplication App { get; }
@@ -49,6 +56,8 @@ namespace McMaster.Extensions.CommandLineUtils
 
             var processor = new CommandLineProcessor(App, context.Arguments);
             var command = processor.Process();
+
+            _conventionContext.ParsingComplete(_target, context);
 
             var validationResult = command.GetValidationResult();
 
@@ -74,6 +83,15 @@ namespace McMaster.Extensions.CommandLineUtils
             var type = typeof(TTarget);
             var typeInfo = type.GetTypeInfo();
 
+            var conventions = typeInfo.GetCustomAttributes().OfType<ICommandLineAppConvention>();
+
+            foreach (var convention in conventions)
+            {
+                convention.Apply(_conventionContext);
+            }
+
+            _conventionContext.TargetTypeInitialized(_target);
+
             var parsingOptionsAttr = typeInfo.GetCustomAttribute<CommandAttribute>();
             parsingOptionsAttr?.Configure(App);
 
@@ -95,9 +113,6 @@ namespace McMaster.Extensions.CommandLineUtils
 
             var versionOptionAttrOnType = typeInfo.GetCustomAttribute<VersionOptionAttribute>();
             versionOptionAttrOnType?.Configure(App);
-
-            var versionOptionFromMember = typeInfo.GetCustomAttribute<VersionOptionFromMemberAttribute>();
-            versionOptionFromMember?.Configure(App, type, _target);
 
             var props = typeInfo.GetProperties(PropertyBindingFlags);
             if (props != null)
