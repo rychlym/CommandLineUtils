@@ -7,7 +7,7 @@ This project is a fork of [Microsoft.Extensions.CommandLineUtils](https://github
 
 ## API Reference
 
-See the [API Reference](./api/) for more details.
+See the [API Reference](./api/index.md) for more details.
 
 ## Install
 
@@ -22,7 +22,7 @@ $ dotnet add package McMaster.Extensions.CommandLineUtils
 ```
 ```xml
 <ItemGroup>
-  <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.0" />
+  <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.1" />
 </ItemGroup>
 ```
 

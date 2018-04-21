@@ -1,6 +1,8 @@
 - name: Home
   href: index.md
-- name: API Documentation
+- name: Documentation
+  href: docs/
+- name: API Reference
   href: api/index.md
 - name: GitHub
   href: https://github.com/natemcmaster/CommandLineUtils

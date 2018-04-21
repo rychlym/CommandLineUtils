@@ -602,9 +602,10 @@ namespace McMaster.Extensions.CommandLineUtils
                 return HelpExitCode;
             }
 
-            if (parseResult.ValidationResult != ValidationResult.Success)
+            var validationResult = command.GetValidationResult();
+            if (validationResult != ValidationResult.Success)
             {
-                return command.ValidationErrorHandler(parseResult.ValidationResult);
+                return command.ValidationErrorHandler(validationResult);
             }
 
             return command.Invoke();
@@ -677,11 +678,17 @@ namespace McMaster.Extensions.CommandLineUtils
         /// <summary>
         /// Show short hint that reminds users to use help option.
         /// </summary>
-        public void ShowHint()
+        public virtual void ShowHint()
         {
             if (OptionHelp != null)
             {
-                Out.WriteLine(string.Format("Specify --{0} for a list of available options and commands.", OptionHelp.LongName));
+                var flag = !string.IsNullOrEmpty(OptionHelp.LongName)
+                    ? "--" + OptionHelp.LongName
+                    : !string.IsNullOrEmpty(OptionHelp.ShortName)
+                        ? "-" + OptionHelp.LongName
+                        : "-" + OptionHelp.SymbolName;
+
+                Out.WriteLine($"Specify {flag} for a list of available options and commands.");
             }
         }
 
@@ -794,12 +801,15 @@ namespace McMaster.Extensions.CommandLineUtils
         /// Gets <see cref="FullName"/> and <see cref="ShortVersionGetter"/>.
         /// </summary>
         /// <returns></returns>
-        public string GetFullNameAndVersion()
+        public virtual string GetFullNameAndVersion()
         {
-            var shortVersion = ShortVersionGetter?.Invoke();
-            return string.IsNullOrEmpty(shortVersion)
-                ? FullName
-                : $"{FullName} {shortVersion}";
+            var items = new List<string>
+            {
+                FullName,
+                ShortVersionGetter?.Invoke()
+            };
+
+            return string.Join(" ", items.Where(i => !string.IsNullOrEmpty(i)));
         }
 
         /// <summary>
@@ -913,20 +923,8 @@ namespace McMaster.Extensions.CommandLineUtils
                     return _parent;
                 }
 
-                if (_parent.AdditionalServices != null)
-                {
-                    var retVal = _parent.AdditionalServices.GetService(serviceType);
-                    if (retVal != null)
-                    {
-                        return retVal;
-                    }
-                }
-
-                if (serviceType == typeof(IConsole))
-                {
-                    return _parent._context.Console;
-                }
-
+                // prefer this type before AdditionalServces because it is common for service containers to automatically
+                // create IEnumerable<T> to allow registration of multiple services
                 if (serviceType == typeof(IEnumerable<CommandOption>))
                 {
                     return _parent.GetOptions();
@@ -950,6 +948,22 @@ namespace McMaster.Extensions.CommandLineUtils
                 if (_parent.Parent is IModelAccessor accessor && serviceType == accessor.GetModelType())
                 {
                     return accessor.GetModel();
+                }
+
+                if (_parent.AdditionalServices != null)
+                {
+                    var retVal = _parent.AdditionalServices.GetService(serviceType);
+                    if (retVal != null)
+                    {
+                        return retVal;
+                    }
+                }
+
+                // Resolve this after AdditionalServices to support overriding IConsole from a custom service container
+                // may be overridden
+                if (serviceType == typeof(IConsole))
+                {
+                    return _parent._context.Console;
                 }
 
                 return null;
