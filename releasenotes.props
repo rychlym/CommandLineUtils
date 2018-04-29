@@ -2,16 +2,11 @@
   <PropertyGroup>
     <PackageReleaseNotes>
 <![CDATA[
-Bug fixes:
 
-- Don't assign option and argument options if no value was provided, preserving the default CLR value unless there is user-input.
-- Fix ShowHint() to use ShortName or SymbolName if OptionHelp.LongName is not set
-- Fix #85 - lower priority of resolving AdditionalServices after most built-in services
-- Fix #79 - OnValidate callbacks invoked before property valueswere assigned
+Minor improvement:
 
-Minor improvements:
-
-- Improve help text generation. Align columns, show top-level command description, and add `protected virtual` API to `DefaultHelpTextGenerator` to make it easier to customize help text
+ - Add conventions from attributes that implement IConvention and IMemberConvention
+ - Add a help option by default as long as it doesn't conflict with existing options
 
 See more details here: https://github.com/natemcmaster/CommandLineUtils/blob/master/CHANGELOG.md#v$(VersionPrefix.Replace('.',''))
 ]]>

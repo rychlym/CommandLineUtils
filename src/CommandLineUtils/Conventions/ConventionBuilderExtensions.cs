@@ -32,7 +32,24 @@ namespace McMaster.Extensions.CommandLineUtils
                 .UseOnExecuteMethodFromModel()
                 .UseOnValidateMethodFromModel()
                 .UseOnValidationErrorMethodFromModel()
-                .UseConstructorInjection();
+                .UseConstructorInjection()
+                .UseDefaultHelpOption();
+        }
+
+        /// <summary>
+        /// Adds --help option, if there isn't already a help flag set.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
+        /// <param name="template">The help template. Defaults to <c>--help</c>.</param>
+        /// <returns>The builder.</returns>
+        public static IConventionBuilder UseDefaultHelpOption(this IConventionBuilder builder, string template = DefaultHelpOptionConvention.DefaultHelpTemplate)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            return builder.AddConvention(new DefaultHelpOptionConvention(template));
         }
 
         /// <summary>
@@ -48,6 +65,7 @@ namespace McMaster.Extensions.CommandLineUtils
             }
 
             return builder
+                .AddConvention(new AttributeConvention())
                 .UseCommandAttribute()
                 .UseVersionOptionFromMemberAttribute()
                 .UseVersionOptionAttribute()

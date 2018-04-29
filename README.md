@@ -29,7 +29,7 @@ $ dotnet add package McMaster.Extensions.CommandLineUtils
 ```
 ```xml
 <ItemGroup>
-  <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.1" />
+  <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.2" />
 </ItemGroup>
 ```
 
@@ -53,7 +53,6 @@ See [samples/](./samples/) for more examples, such as:
 using System;
 using McMaster.Extensions.CommandLineUtils;
 
-[HelpOption]
 public class Program
 {
     public static int Main(string[] args)

@@ -1,5 +1,14 @@
 # Changelog
 
+## [v2.2.2]
+
+**April 28, 2018**
+
+Minor improvement:
+
+ - Add conventions from attributes that implement IConvention and IMemberConvention
+ - Add a help option by default as long as it doesn't conflict with existing options
+
 ## [v2.2.1]
 
 **April 10, 2018**
@@ -141,7 +150,8 @@ Other:
 [@rmcc13]: https://github.com/rmcc13
 [@sebastienros]: https://github.com/sebastienros
 
-[Unreleased]: https://github.com/natemcmaster/CommandLineUtils/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/natemcmaster/CommandLineUtils/compare/v2.2.2...HEAD
+[v2.2.2]: https://github.com/natemcmaster/CommandLineUtils/compare/v2.2.1...v2.2.2
 [v2.2.1]: https://github.com/natemcmaster/CommandLineUtils/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/natemcmaster/CommandLineUtils/compare/v2.2.0-rc...v2.2.0
 [v2.2.0-rc]: https://github.com/natemcmaster/CommandLineUtils/compare/v2.2.0-beta...v2.2.0-rc
