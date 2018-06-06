@@ -22,7 +22,9 @@
   "build": {
     "content": [
       {
-        "files": ["**.yml"],
+        "files": [
+          "**.yml"
+        ],
         "exclude": [
           "**/obj/**",
           "**.meta"

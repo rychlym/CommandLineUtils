@@ -1,12 +1,11 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes>
+    <PackageReleaseNotes Condition="'$(VersionPrefix)' == '2.2.4'">
 <![CDATA[
+Bug fixes:
 
-Minor improvement:
-
- - Add conventions from attributes that implement IConvention and IMemberConvention
- - Add a help option by default as long as it doesn't conflict with existing options
+* @liamdawson: support parsing `System.Uri`
+* Fix #101 - Update `DotNetExe.FullPath` to honor the `DOTNET_ROOT` environment variable as a fallback
 
 See more details here: https://github.com/natemcmaster/CommandLineUtils/blob/master/CHANGELOG.md#v$(VersionPrefix.Replace('.',''))
 ]]>
