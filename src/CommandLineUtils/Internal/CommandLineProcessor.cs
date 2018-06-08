@@ -32,7 +32,7 @@ namespace McMaster.Extensions.CommandLineUtils
         {
             var parseResult = new ParseResult();
             _currentCommand = _initialCommand;
-            _currentCommandArguments = null;
+            _currentCommandArguments = new CommandArgumentEnumerator(_currentCommand.Arguments.GetEnumerator());
             while (_enumerator.MoveNext())
             {
                 if (!ProcessNext())
@@ -111,28 +111,59 @@ namespace McMaster.Extensions.CommandLineUtils
         private bool ProcessCommandOrArgument()
         {
             var arg = _enumerator.Current;
-            foreach (var subcommand in _currentCommand.Commands)
+            var argVal = arg?.Raw;
+            var isArgValArg = false;
+            if (argVal != null)
             {
-                if (string.Equals(subcommand.Name, arg.Raw, StringComparison.OrdinalIgnoreCase))
+                var argValLenM1 = argVal.Length - 1;
+                isArgValArg = argValLenM1 > 0 && argVal[0] == '"' && argVal[argValLenM1] == '"';
+                if (isArgValArg)
                 {
-                    _currentCommand = subcommand;
-                    return true;
+                    argVal = argVal.Substring(1, --argValLenM1);
                 }
             }
 
-            if (_currentCommandArguments == null)
-            {
-                _currentCommandArguments = new CommandArgumentEnumerator(_currentCommand.Arguments.GetEnumerator());
-            }
-
+            CommandArgument currentAgument = null;
+            var currentArgumentRequired = false;
             if (_currentCommandArguments.MoveNext())
             {
-                _currentCommandArguments.Current.Values.Add(arg.Raw);
+                currentAgument = _currentCommandArguments.Current;
+                currentArgumentRequired = currentAgument.GetIsRequired();
+            }
+            if (!currentArgumentRequired && !isArgValArg)
+            {
+                // follower should be a sub-command 
+                foreach (var subcommand in _currentCommand.Commands)
+                {
+                    if (string.Equals(subcommand.Name, argVal, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _currentCommand = subcommand;
+                        _currentCommandArguments = new CommandArgumentEnumerator(_currentCommand.Arguments.GetEnumerator());
+                        return true;
+                    }
+                }
+
+                // or a non-required argument
+                if (currentAgument != null)
+                {
+                    currentAgument.Values.Add(argVal);
+                }
+                else
+                {
+                    HandleUnexpectedArg("command or argument");
+                    return false;
+                }
             }
             else
             {
-                HandleUnexpectedArg("command or argument");
-                return false;
+                // follower should be an required argument or hint the argVal is argument
+                if (currentAgument == null)
+                {
+                    HandleUnexpectedArg($"bad {argVal} argument");
+                    return false;
+                }
+
+                currentAgument.Values.Add(argVal);
             }
 
             return true;

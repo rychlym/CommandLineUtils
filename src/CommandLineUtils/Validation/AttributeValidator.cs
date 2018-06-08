@@ -43,6 +43,12 @@ namespace McMaster.Extensions.CommandLineUtils.Validation
         }
 
         /// <summary>
+        ///  Gets whether validator is against the IsRequired.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasIsRequired() => _attribute is RequiredAttribute isReqAttr && !isReqAttr.AllowEmptyStrings;
+
+        /// <summary>
         /// Gets the validation result for a command line argument.
         /// </summary>
         /// <param name="argument"></param>
@@ -74,5 +80,7 @@ namespace McMaster.Extensions.CommandLineUtils.Validation
 
             return ValidationResult.Success;
         }
+
+
     }
 }

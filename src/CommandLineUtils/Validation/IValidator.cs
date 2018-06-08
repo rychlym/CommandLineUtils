@@ -8,5 +8,10 @@ namespace McMaster.Extensions.CommandLineUtils.Validation
     /// </summary>
     public interface IValidator : IOptionValidator, IArgumentValidator
     {
+        /// <summary>
+        ///  Gets whether validator is against the IsRequired.
+        /// </summary>
+        /// <returns></returns>
+        bool HasIsRequired();
     }
 }

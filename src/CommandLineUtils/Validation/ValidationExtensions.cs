@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 using McMaster.Extensions.CommandLineUtils.Validation;
 
@@ -42,6 +43,13 @@ namespace McMaster.Extensions.CommandLineUtils
             argument.Validators.Add(new AttributeValidator(attribute));
             return argument;
         }
+
+        /// <summary>
+        /// Get the argument is required.
+        /// </summary>
+        /// <param name="argument"></param>
+        /// <returns></returns>
+        public static bool GetIsRequired(this CommandArgument argument) => argument.Validators.Cast<AttributeValidator>().Any(v => v.HasIsRequired());
 
         /// <summary>
         /// Specifies a set of rules used to determine if input is valid.

@@ -86,6 +86,11 @@ namespace McMaster.Extensions.CommandLineUtils.Conventions
                 || (typeof(IEnumerable).GetTypeInfo().IsAssignableFrom(prop.PropertyType)
                     && prop.PropertyType != typeof(string));
 
+            if (argumentAttr.IsReSquired)
+            {
+                argument.IsRequired();
+            }
+
             if (argPropOrder.TryGetValue(argumentAttr.Order, out var otherProp))
             {
                 throw new InvalidOperationException(
@@ -96,7 +101,7 @@ namespace McMaster.Extensions.CommandLineUtils.Conventions
             argOrder.Add(argumentAttr.Order, argument);
 
             var setter = ReflectionHelper.GetPropertySetter(prop);
-
+            var cmd = convention.ModelAccessor;
             if (argument.MultipleValues)
             {
                 var collectionParser = CollectionParserProvider.Default.GetParser(
@@ -114,7 +119,7 @@ namespace McMaster.Extensions.CommandLineUtils.Conventions
                         return;
                     }
 
-                    if (r.SelectedCommand is IModelAccessor cmd)
+                    if (cmd != null)
                     {
                         setter.Invoke(cmd.GetModel(), collectionParser.Parse(argument.Name, argument.Values));
                     }
@@ -135,7 +140,7 @@ namespace McMaster.Extensions.CommandLineUtils.Conventions
                         return;
                     }
 
-                    if (r.SelectedCommand is IModelAccessor cmd)
+                    if (cmd != null)
                     {
                         setter.Invoke(
                             cmd.GetModel(),

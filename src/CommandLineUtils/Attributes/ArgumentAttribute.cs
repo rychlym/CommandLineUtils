@@ -28,7 +28,7 @@ namespace McMaster.Extensions.CommandLineUtils
         /// <param name="order">The order</param>
         /// <param name="name">The name</param>
         public ArgumentAttribute(int order, string name)
-            : this(order, name, null)
+            : this(order, name, null, false)
         { }
 
         /// <summary>
@@ -38,10 +38,23 @@ namespace McMaster.Extensions.CommandLineUtils
         /// <param name="name">The name</param>
         /// <param name="description">The description</param>
         public ArgumentAttribute(int order, string name, string description)
+            : this(order, name, description, false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="ArgumentAttribute" />.
+        /// </summary>
+        /// <param name="order">The order</param>
+        /// <param name="name">The name</param>
+        /// <param name="description">The description</param>
+        /// <param name="isRequired">Is the item is required.</param>
+        public ArgumentAttribute(int order, string name, string description, bool isRequired)
         {
             Order = order;
             Name = name;
             Description = description;
+            IsReSquired = isRequired;
         }
 
         /// <summary>
@@ -58,6 +71,11 @@ namespace McMaster.Extensions.CommandLineUtils
         /// Determines if the argument appears in the generated help-text.  <seealso cref="CommandArgument.ShowInHelpText"/>.
         /// </summary>
         public bool ShowInHelpText { get; set; } = true;
+
+        /// <summary>
+        /// Determines if the argument is required. 
+        /// </summary>
+        public bool IsReSquired { get; set; } = false;
 
         /// <summary>
         /// A description of the argument.  <seealso cref="CommandArgument.Description"/>.
